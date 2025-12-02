@@ -62,7 +62,7 @@ pub const ProgressBar = struct {
 
     pub fn init(allocator: std.mem.Allocator, stdout: std.fs.File) !ProgressBar {
         const width = getScreenWidth(stdout.handle);
-        const buf: std.Io.Writer.Allocating = try .initCapacity(allocator, width + WIDTH_PADDING);
+        const buf = try std.Io.Writer.Allocating.initCapacity(allocator, width + WIDTH_PADDING);
         return .{
             .spinner = .init(),
             .last_rendered = try .now(),
