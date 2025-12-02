@@ -191,7 +191,7 @@ pub fn main() !void {
             (timer.read() - first_start) < max_nano_seconds) and
             sample_index < samples_buf.len) : (sample_index += 1)
         {
-            if (tty_conf != .no_color) try bar.render(arena);
+            if (tty_conf != .no_color) try bar.render();
             for (perf_measurements, &perf_fds) |measurement, *perf_fd| {
                 var attr: std.os.linux.perf_event_attr = .{
                     .type = PERF.TYPE.HARDWARE,
@@ -241,9 +241,7 @@ pub fn main() !void {
                 var overflow_buffer: [4096]u8 = undefined;
 
                 while (true) {
-                    var reader = child.stderr.?.reader(&.{});
-                    const amt = try reader.interface.readSliceShort(&overflow_buffer);
-
+                    const amt = std.posix.read(child.stderr.?.handle, &overflow_buffer) catch break;
                     if (amt == 0) break;
                 }
             }
@@ -486,7 +484,7 @@ const Measurement = struct {
 };
 
 fn printMeasurement(
-    tty_conf: std.io.tty.Config,
+    tty_conf: std.Io.tty.Config,
     w: *std.Io.Writer,
     m: Measurement,
     name: []const u8,
