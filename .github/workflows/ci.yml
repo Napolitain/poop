@@ -12,7 +12,7 @@ jobs:
         target: [ x86-linux, x86_64-linux, aarch64-linux, riscv64-linux ]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - uses: mlugg/setup-zig@v2
       with:
         version: master
@@ -23,5 +23,5 @@ jobs:
     - name: Archive executable
       uses: actions/upload-artifact@v4
       with:
-        name: poop
+        name: poop-${{ matrix.target }}
         path: zig-out/bin/*
